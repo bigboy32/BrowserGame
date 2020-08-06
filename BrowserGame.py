@@ -37,7 +37,7 @@ class Shape(object):
     def __init__(self, color, mainPageFileName, add_line_num, Style, shape, class_name):
         self.style = Style
         self.color = color
-        self.mainPageFile = open(mainPageFileName)
+        self.mainPageFile = open(mainPageFileName, "r+")
         self.mpfc = self.mainPageFile.readlines()
         self.add_line_num = add_line_num + 1
         self.shape = shape
@@ -79,15 +79,15 @@ class Shape(object):
 
 
 class Square(Shape):
-    def __init__(self, filename, render_template, color, fileName, add_line_num, style, class_name="Square"):
+    def __init__(self, filename, render_template, color, add_line_num, style=None, class_name="Square"):
 
-        super.__init__(filename, color, fileName, add_line_num,
-                       style, 'Square', class_name)
+        super(Square, self).__init__(color, filename, add_line_num,
+                                     style, 'Square', class_name)
 
         self.filename = filename
         self.render_template = render_template
         self.color = color
-        self.fileName = fileName
+
         self.add_line_num = add_line_num
         self.class_name = class_name
         self.style = style
@@ -100,15 +100,14 @@ class Square(Shape):
 
 
 class Circle(Shape):
-    def __init__(self, filename, render_template, color, fileName, add_line_num, style, class_name="Circle"):
+    def __init__(self, filename, render_template, color, add_line_num, style=None, class_name="Circle"):
 
-        super.__init__(filename, color, fileName, add_line_num,
-                       style, 'Circle', class_name)
+        super(Circle, self).__init__(color, filename, add_line_num,
+                                     style, 'Circle', class_name)
 
         self.filename = filename
         self.render_template = render_template
         self.color = color
-        self.fileName = fileName
         self.add_line_num = add_line_num
         self.class_name = class_name
         self.style = style
@@ -118,4 +117,5 @@ class Circle(Shape):
         super.render()
 
         return self.render_template(self.filename)
+
 
