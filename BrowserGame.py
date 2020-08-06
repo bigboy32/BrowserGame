@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 
 
-class Webpage:
+class Webpage(object):
     def __init__(self, filename, render_template):
         self.filename = filename
         self.render_template = render_template
@@ -33,10 +33,89 @@ class LoginScreen(Webpage):
             self.nextScreen.render()
 
 
-class Shape:
-    def __init__(self, color, location, mainPageFileName, Style=None):
-        self.color = color
-        self.location = location
+class Shape(object):
+    def __init__(self, color, mainPageFileName, add_line_num, Style, shape, class_name):
         self.style = Style
-        self.mainPageFile = open(mainPageFileName "r")
-        self.mpfc = self.mainPageFile.read()
+        self.color = color
+        self.mainPageFile = open(mainPageFileName)
+        self.mpfc = self.mainPageFile.readlines()
+        self.add_line_num = add_line_num + 1
+        self.shape = shape
+        self.class_name = class_name
+
+    def _add(self, data, extra_whitespace=0):
+
+        last_tag = self.mpfc[self.add_line_num - 2]
+        whitespace = 0
+
+        if "<div" in last_tag:
+            whitespace += 4
+        for item in last_tag:
+            if item == " ":
+                whitespace += 1
+
+        return " " * (whitespace + extra_whitespace) + data
+
+    def render(self):
+        div_open = self._add("<div class='Shape'>")
+
+        if self.style != None:
+            content = self._add(
+                f"<img src='Images/{self.shape}/{self.color}.png' class='{self.class_name}' style='{self.style}'>", 2)
+        else:
+            content = self._add(
+                f"<img src='Images/{self.shape}/{self.color}.png' class='{self.class_name}'>", 2)
+
+        div_close = self._add("<\div>")
+
+        self.mpfc.insert(self.add_line_num, div_open)
+        self.mpfc.insert(self.add_line_num + 1, content)
+        self.mpfc.insert(self.add_line_num + 2, div_close)
+
+        self.mainPageFile.writelines(self.mpfc)
+
+    def display(self):
+        return self.mainPageFile.readlines()
+
+
+class Square(Shape):
+    def __init__(self, filename, render_template, color, fileName, add_line_num, style, class_name="Square"):
+
+        super.__init__(filename, color, fileName, add_line_num,
+                       style, 'Square', class_name)
+
+        self.filename = filename
+        self.render_template = render_template
+        self.color = color
+        self.fileName = fileName
+        self.add_line_num = add_line_num
+        self.class_name = class_name
+        self.style = style
+
+    # @override
+    def display(self):
+        super.render()
+
+        return self.render_template(self.filename)
+
+
+class Circle(Shape):
+    def __init__(self, filename, render_template, color, fileName, add_line_num, style, class_name="Circle"):
+
+        super.__init__(filename, color, fileName, add_line_num,
+                       style, 'Circle', class_name)
+
+        self.filename = filename
+        self.render_template = render_template
+        self.color = color
+        self.fileName = fileName
+        self.add_line_num = add_line_num
+        self.class_name = class_name
+        self.style = style
+
+    # @override
+    def display(self):
+        super.render()
+
+        return self.render_template(self.filename)
+
